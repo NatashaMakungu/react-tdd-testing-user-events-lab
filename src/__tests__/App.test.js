@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import '@testing-library/jest-dom';
 
 import App from "../App";
@@ -67,25 +67,71 @@ test("displays the correct links", () => {
 // Newsletter Form - Initial State
 test("the form includes text inputs for name and email address", () => {
   // your test code here
+  render(<App />);
+  
+  const nameInput = screen.getByLabelText("Name:");
+  const emailInput = screen.getByLabelText("Email:");
+
+  expect(nameInput).toBeInTheDocument();
+  expect(emailInput).toBeInTheDocument();
 });
 
 test("the form includes three checkboxes to select areas of interest", () => {
   // your test code here
+  render(<App />);
+  
+  const checkboxes = screen.getAllByRole("checkbox");
+
+  expect(checkboxes.length).toBe(3);
 });
 
 test("the checkboxes are initially unchecked", () => {
   // your test code here
+  render(<App />);
+  
+  const checkboxes = screen.getAllByRole("checkbox");
+
+  checkboxes.forEach((checkbox) => {
+    expect(checkbox).not.toBeChecked();
+  });
 });
 
 // Newsletter Form - Adding Responses
 test("the page shows information the user types into the name and email address form fields", () => {
   // your test code here
+  render(<App />);
+  
+  const nameInput = screen.getByLabelText("Name:");
+  const emailInput = screen.getByLabelText("Email:");
+
+  fireEvent.change(nameInput, { target: { value: "Natasha Lee" } });
+  fireEvent.change(emailInput, { target: { value: "natasha@example.com" } });
+
+  expect(nameInput).toHaveValue("Natasha Lee");
+  expect(emailInput).toHaveValue("natasha@example.com");
 });
 
 test("checked status of checkboxes changes when user clicks them", () => {
   // your test code here
+  render(<App />);
+  
+  const checkboxes = screen.getAllByRole("checkbox");
+
+  checkboxes.forEach((checkbox) => {
+    fireEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+  });
 });
 
 test("a message is displayed when the user clicks the Submit button", () => {
   // your test code here
+  render(<App />);
+  
+  const submitButton = screen.getByRole("button", { name: /submit/i });
+
+  fireEvent.click(submitButton);
+
+  const successMessage = screen.getByText(/form submitted successfully/i);
+
+  expect(successMessage).toBeInTheDocument();
 });
